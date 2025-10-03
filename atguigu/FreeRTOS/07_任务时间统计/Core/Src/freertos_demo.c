@@ -1,0 +1,111 @@
+#include "freertos_demo.h"
+/* freertos相关的头文件，必须的 */
+#include "FreeRTOS.h"
+#include "task.h"
+/* 需要用到的其他头文件 */
+#include "LED.h"
+#include "Key.h"
+
+/* 启动任务的配置 */
+#define START_TASK_STACK 128
+#define START_TASK_PRIORITY 1
+TaskHandle_t start_task_handle;
+void start_task(void *pvParameters);
+
+/* 任务1的配置 */
+#define TASK1_STACK 128
+#define TASK1_PRIORITY 2
+TaskHandle_t task1_handle;
+void task1(void *pvParameters);
+
+/* 任务2的配置 */
+#define TASK2_STACK 128
+#define TASK2_PRIORITY 3
+TaskHandle_t task2_handle;
+void task2(void *pvParameters);
+
+
+
+/**
+ * @description: 启动FreeRTOS
+ * @return {*}
+ */
+void freertos_start(void)
+{
+    /* 1.创建一个启动任务 */
+    xTaskCreate((TaskFunction_t)start_task,               // 任务函数的地址
+                (char *)"start_task",                     // 任务名字符串
+                (configSTACK_DEPTH_TYPE)START_TASK_STACK, // 任务栈大小，默认最小128，单位4字节
+                (void *)NULL,                             // 传递给任务的参数
+                (UBaseType_t)START_TASK_PRIORITY,         // 任务的优先级
+                (TaskHandle_t *)&start_task_handle);      // 任务句柄的地址
+
+    /* 2.启动调度器:会自动创建空闲任务 */
+    vTaskStartScheduler();
+}
+
+/**
+ * @description: 启动任务：用来创建其他Task
+ * @param {void} *pvParameters
+ * @return {*}
+ */
+void start_task(void *pvParameters)
+{
+    /* 进入临界区:保护临界区里的代码不会被打断 */
+    taskENTER_CRITICAL();
+
+    /* 创建3个任务 */
+    xTaskCreate((TaskFunction_t)task1,
+                (char *)"task1",
+                (configSTACK_DEPTH_TYPE)TASK1_STACK,
+                (void *)NULL,
+                (UBaseType_t)TASK1_PRIORITY,
+                (TaskHandle_t *)&task1_handle);
+    xTaskCreate((TaskFunction_t)task2,
+                (char *)"task2",
+                (configSTACK_DEPTH_TYPE)TASK2_STACK,
+                (void *)NULL,
+                (UBaseType_t)TASK2_PRIORITY,
+                (TaskHandle_t *)&task2_handle);
+
+    /* 启动任务只需要执行一次即可，用完就删除自己 */
+    vTaskDelete(NULL);
+
+    /* 退出临界区 */
+    taskEXIT_CRITICAL();
+}
+
+/**
+ * @description: 任务一：实现LED1每500ms闪烁一次
+ * @param {void} *pvParameters
+ * @return {*}
+ */
+void task1(void *pvParameters)
+{
+
+    while (1)
+    {
+        printf("task1运行...\r\n");
+        LED_Toggle(LED1_Pin);
+        vTaskDelay(500);
+    }
+}
+
+/**
+ * @description: 任务二：用于展示任务运行时间统计相关API函数的使用
+ * @param {void} *pvParameters
+ * @return {*}
+ */
+char task_time_info[500];
+void task2(void *pvParameters)
+{
+    while (1)
+    {
+        printf("task2运行...\r\n");
+        vTaskGetRunTimeStats(task_time_info);
+        printf("%s\r\n",task_time_info);
+        vTaskDelay(500);
+    }
+}
+
+
