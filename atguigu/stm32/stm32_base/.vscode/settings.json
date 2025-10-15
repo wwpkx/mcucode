@@ -1,3 +1,7 @@
 {
-    "files.encoding": "gbk"
+    "workbench.editorAssociations": {
+        // "*.md": "markmap-vscode.markmap"
+        "files.autoGuessEncoding": true,
+        "editor.wordSeparators": "`~!@#$%^&*()-=+[{]}\\|;:'\",.<>/?，“”（）【】「」？！"
+    }
 }
