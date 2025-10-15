@@ -1,7 +1,12 @@
 {
     "workbench.editorAssociations": {
         // "*.md": "markmap-vscode.markmap"
-        "files.autoGuessEncoding": true,
-        "editor.wordSeparators": "`~!@#$%^&*()-=+[{]}\\|;:'\",.<>/?，“”（）【】「」？！"
-    }
+    },
+    "editor.wordSeparators": "`~!@#$%^&*()-=+[{]}\\|;:'\",.<>/?，“”（）【】「」？！",
+    "files.encoding": "gb2312",
+    "files.autoGuessEncoding": true,
+    "files.candidateGuessEncodings": [
+        "utf8",
+        "gb2312"
+    ]
 }
