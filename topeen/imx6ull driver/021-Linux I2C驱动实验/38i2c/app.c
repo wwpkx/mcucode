@@ -27,13 +27,15 @@ int i2c_read_data(unsigned int slave_addr, unsigned char reg_addr)
 	//定义一个要发送的数据包i2c_read_lcd
 	struct i2c_rdwr_ioctl_data i2c_read_lcd;
 	//定义初始化i2c_msg结构体
+	//1. 设置从机的地址 
+	//2. 读数据
 	struct i2c_msg msg[2] = {
 		[0] = {
-			.addr = slave_addr,		  //设置从机额地址
+			.addr = slave_addr,		  //设置从机地址
 			.flags = 0,				  //设置为写
 			.buf = &reg_addr,		  //设置寄存器的地址
 			.len = sizeof(reg_addr)}, //设置寄存器的地址的长度
-		[1] = {.addr = slave_addr,	  //设置从机额地址
+		[1] = {.addr = slave_addr,	  //设置从机地址
 			   .flags = 1,			  //设置为读
 			   .buf = &data,		  //设置寄存器的地址
 			   .len = sizeof(data)},  //设置寄存器的地址
@@ -53,7 +55,6 @@ int i2c_read_data(unsigned int slave_addr, unsigned char reg_addr)
 }
 int main(int argc, char *argv[])
 {
-
 	int TD_STATUS;
 	//打开设备节点
 	fd = open("/dev/i2c-1", O_RDWR);
